@@ -52,6 +52,7 @@ class SyntheticSession:
     heading_deg: np.ndarray       # (N,) torso facing direction
     occluded: np.ndarray          # (N,) sensor covered by sleeve/hand
     uvi_ambient: np.ndarray       # (M,) unobstructed horizontal UVI (incl. clouds)
+    uvi_local: np.ndarray         # (M,) horizontal UVI at the wearer's spot (after shade/indoor)
     uvi_sensor: np.ndarray        # (M,) UVI actually at the sensor
     body_part_uvi: np.ndarray     # (M, P) UVI on each body part (BODY_PARTS order)
     sun_elev_deg: np.ndarray      # (M,)
@@ -150,6 +151,8 @@ def generate_session(scenario: Scenario, lat: float, lon: float, day_start_utc: 
     occ = occluded[: M * P].reshape(M, P).mean(axis=1)
     r_sensor *= 1.0 - occ * (1.0 - config.SLEEVE_OCCLUSION_FACTOR.value)
     uvi_sensor = amb * r_sensor
+    sun_up = sun[:, 2] > 0
+    uvi_local = amb * (np.where(sun_up, (1.0 - fd) * direct_vis, 0.0) + fd) * sky_view
 
     cal_true = float(np.exp(rng.normal(0.0, cal_log_sd)))
     expected = uvi_sensor * COUNTS_PER_UVI * cal_true
@@ -176,7 +179,7 @@ def generate_session(scenario: Scenario, lat: float, lon: float, day_start_utc: 
         environment=np.array([ENV_CODE[e] for e in env_truth]),
         activity=np.array([ACT_CODE[a] for a in act]),
         posture=posture.astype(str), heading_deg=heading, occluded=occluded,
-        uvi_ambient=amb, uvi_sensor=uvi_sensor, body_part_uvi=body,
+        uvi_ambient=amb, uvi_local=uvi_local, uvi_sensor=uvi_sensor, body_part_uvi=body,
         sun_elev_deg=elev, sun_az_deg=az, sunscreen_events=sunscreen_events,
         cal_true=cal_true, lat=lat, lon=lon,
     )

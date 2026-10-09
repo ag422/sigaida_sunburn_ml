@@ -39,6 +39,7 @@ original paper before quoting it in the report.
 | `INDOOR_UV_FACTOR` | 0.02 | fraction | low | Erythemal UV indoors near a window; glass blocks most UVB. |
 | `CLOUD_ATTENUATION` | 0.35 | fraction | low | UV transmitted when a cloud covers the sun (all diffuse). Broken-cloud edge enhancement (> 1) is NOT modelled. |
 | `WATER_UV_FACTOR` | 0.4 | fraction | low | Erythemal UV reaching skin ~0.3-0.5 m under water; depends strongly on clarity. |
+| `SWIM_SENSOR_SUBMERGED_FRACTION` | 0.4 | fraction | low | Share of a freestyle stroke cycle the wrist sensor spends under water (hand below the shoulder for ~40% of the arm circle). Stroke-dependent. |
 | `SLEEVE_OCCLUSION_FACTOR` | 0.1 | fraction | low | UV reaching the sensor when covered by a sleeve/hand (synthetic data only). |
 | `LTR390_COUNTS_PER_UVI` | 2300 | counts/UVI | low | LTR390 datasheet sensitivity at gain 18x, 20-bit. Must be replaced by outdoor calibration against an official UVI (Phase 3). |
 | `SENSOR_CAL_LOG_SD` | 0.2 | ln(UVI) | low | Uncertainty of counts->UVI before calibration. Should shrink to the measured residual spread after Phase 3. |

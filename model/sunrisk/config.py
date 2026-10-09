@@ -148,6 +148,12 @@ WATER_UV_FACTOR = Assumption(
     0.4, "fraction", "low", "Erythemal UV reaching skin ~0.3-0.5 m under water; depends strongly on clarity.",
 )
 
+SWIM_SENSOR_SUBMERGED_FRACTION = Assumption(
+    0.4, "fraction", "low",
+    "Share of a freestyle stroke cycle the wrist sensor spends under water (hand below the "
+    "shoulder for ~40% of the arm circle). Stroke-dependent.",
+)
+
 SLEEVE_OCCLUSION_FACTOR = Assumption(
     0.1, "fraction", "low", "UV reaching the sensor when covered by a sleeve/hand (synthetic data only).",
 )

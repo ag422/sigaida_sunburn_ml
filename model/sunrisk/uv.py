@@ -31,3 +31,13 @@ def integrate_dose(t_s, e_ery):
     if t.size < 2:
         return 0.0
     return float(np.sum(0.5 * (e[1:] + e[:-1]) * np.diff(t)))
+
+
+# LTR390 integration time per resolution setting (datasheet; verify against the part we have).
+_INTEGRATION_MS = {20: 400.0, 19: 200.0, 18: 100.0, 17: 50.0, 16: 25.0, 13: 3.125}
+
+
+def counts_per_uvi(gain: int, res_bits: int,
+                   ref_counts_per_uvi=config.LTR390_COUNTS_PER_UVI.value) -> float:
+    """Sensitivity scales with gain and integration time; reference is gain 18, 20-bit."""
+    return ref_counts_per_uvi * (gain / 18.0) * (_INTEGRATION_MS[res_bits] / 400.0)
