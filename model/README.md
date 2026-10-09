@@ -36,7 +36,7 @@ Scripts (need the downloaded data):
 |---|---|
 | `scripts/simulate_day.py` | `docs/figures/beach_day.png`: end-to-end beach day, per body part |
 | `scripts/evaluate_events.py` | event-detection confusion matrices (`docs/figures/event_confusion.png`) |
-| `scripts/train_activity.py` | PAMAP2 classifier: leave-one-subject-out comparison, exports `data/models/activity_forest.json` (needs `pip install .[ml]`) |
+| `scripts/train_activity.py` | PAMAP2 classifier: leave-one-subject-out comparison, exports `models/activity_forest.json` (needs `pip install .[ml]`) |
 | `scripts/backtest_forecast.py` | forecast vs constant projection errors |
 | `scripts/check_clearsky_vs_power.py` | clear-sky formula vs NASA POWER per site |
 

@@ -56,7 +56,7 @@ Random forest, per class:
 - **Confusion matrices:** `docs/figures/pamap2_confusion.png`.
 
 **Choice:** a random forest. It ties gradient boosting on accuracy, but it exports to plain
-arrays. `forest_to_dict` writes `data/models/activity_forest.json` (1.4 MB, trained on all
+arrays. `forest_to_dict` writes `model/models/activity_forest.json` (1.4 MB, trained on all
 9 subjects). `ForestPredictor` runs it with numpy only, and agrees with scikit-learn on
 99.98% of windows (rounding in the export); a unit test checks exact agreement on a small
 forest. The same JSON plus a ~30-line tree walk runs in TypeScript.

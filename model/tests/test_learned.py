@@ -90,3 +90,14 @@ def test_learned_detector_swim_rule_overrides_classifier():
     w = Windows(np.zeros(6), imu_features(acc, gyro))
     act = LearnedDetector(_AlwaysSitting()).predict_activity_from_imu(acc, gyro, w)
     assert (act == ACTIVITIES.index("swimming")).all()
+
+
+def test_committed_model_loads_and_predicts_without_sklearn():
+    import json
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[1] / "models" / "activity_forest.json"
+    pred = ForestPredictor(json.loads(path.read_text()))
+    n = WINDOW_N * 3
+    hanging = imu_features_ml(np.tile([-1.0, 0.0, 0.0], (n, 1)), np.zeros((n, 3)))
+    assert set(pred.predict_activity(hanging)) <= {ACTIVITIES.index(c) for c in pred.spec["classes"]}
+    assert np.allclose(pred.predict_proba(hanging).sum(axis=1), 1.0)

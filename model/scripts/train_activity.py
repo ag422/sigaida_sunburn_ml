@@ -5,7 +5,7 @@
 1. Leave-one-subject-out (LOSO) comparison on PAMAP2: rules baseline, logistic regression,
    random forest, gradient boosting. Windows from the held-out person are never seen in
    training, so scores estimate performance on a NEW person.
-2. Train the random forest on all 9 subjects, export to data/models/activity_forest.json
+2. Train the random forest on all 9 subjects, export to model/models/activity_forest.json
    (numpy/TypeScript-portable), and check the numpy predictor matches scikit-learn.
 3. Transfer check: PAMAP2-trained forest vs rules on synthetic device sessions.
 
@@ -41,7 +41,7 @@ from sunrisk.synth.generate import generate_session  # noqa: E402
 from sunrisk.synth.scenario import random_scenario  # noqa: E402
 
 PAMAP = ROOT / "data" / "raw" / "pamap2" / "PAMAP2_Dataset"
-MODEL_OUT = ROOT / "data" / "models" / "activity_forest.json"
+MODEL_OUT = ROOT / "model" / "models" / "activity_forest.json"
 PAMAP_CLASSES = [a for a in ACTIVITIES if a != "swimming"]
 IDX = [ACTIVITIES.index(a) for a in PAMAP_CLASSES]
 
