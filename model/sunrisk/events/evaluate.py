@@ -14,11 +14,14 @@ def confusion_matrix(y_true, y_pred, n_classes):
 def per_class_scores(cm):
     """Returns (precision, recall, f1, support) arrays; NaN where undefined."""
     tp = np.diag(cm).astype(float)
+    support = cm.sum(axis=1)
     with np.errstate(invalid="ignore", divide="ignore"):
         precision = tp / cm.sum(axis=0)
-        recall = tp / cm.sum(axis=1)
+        recall = tp / support
         f1 = 2 * precision * recall / (precision + recall)
-    return precision, recall, f1, cm.sum(axis=1)
+    # a class that occurs but is never predicted correctly scores 0, not "undefined"
+    f1 = np.where((support > 0) & (tp == 0), 0.0, f1)
+    return precision, recall, f1, support
 
 
 def format_report(cm, names):

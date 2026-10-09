@@ -23,7 +23,8 @@ If pytest crashes on import with an unrelated plugin (e.g. some Anaconda install
 | `sunrisk/geometry.py` | UV on tilted surfaces, body-part normals per posture |
 | `sunrisk/bodydose.py` | sensor gain from tilt/compass, ambient UV estimate |
 | `sunrisk/pipeline.py` | device stream → ambient UVI + per-body-part ratios |
-| `sunrisk/events/` | event detection: features, rules detector, confusion matrices |
+| `sunrisk/events/` | event detection: features, rules detector, learned (PAMAP2) classifier, confusion matrices |
+| `sunrisk/datasets/pamap2.py` | PAMAP2 wrist IMU → our units, axes and labels |
 | `sunrisk/forecast.py` | forecast-aware expected UV curve for time-left |
 | `sunrisk/session.py` | end-to-end: device arrays → detected events → risk over time |
 | `sunrisk/synth/` | synthetic sessions: scenarios, wrist motion, clouds, LTR390 counts |
@@ -35,6 +36,7 @@ Scripts (need the downloaded data):
 |---|---|
 | `scripts/simulate_day.py` | `docs/figures/beach_day.png`: end-to-end beach day, per body part |
 | `scripts/evaluate_events.py` | event-detection confusion matrices (`docs/figures/event_confusion.png`) |
+| `scripts/train_activity.py` | PAMAP2 classifier: leave-one-subject-out comparison, exports `data/models/activity_forest.json` (needs `pip install .[ml]`) |
 | `scripts/backtest_forecast.py` | forecast vs constant projection errors |
 | `scripts/check_clearsky_vs_power.py` | clear-sky formula vs NASA POWER per site |
 

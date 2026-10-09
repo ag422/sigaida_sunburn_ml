@@ -46,7 +46,10 @@ def analyze_session(t_unix_s, acc_g, gyro_dps, uv_idx, uv_counts, uv_gain, uv_re
     detector = detector or RuleDetector()
     w = build_windows(t_unix_s, acc_g, gyro_dps, uv_idx, uv_counts, uv_gain, uv_res_bits, lat, lon,
                       day_start_utc, forecast_uvi_hourly, site_scale, albedo)
-    env_w, act_w = detector.predict(w)
+    if hasattr(detector, "predict_session"):          # learned activity model needs raw IMU
+        env_w, act_w = detector.predict_session(acc_g, gyro_dps, w)
+    else:
+        env_w, act_w = detector.predict(w)
     hold_w = detector.hold_mask() if hasattr(detector, "hold_mask") else np.zeros(len(env_w), bool)
     W = len(env_w)
 

@@ -126,3 +126,50 @@ def build_windows(t_unix_s, acc_g, gyro_dps, uv_idx, uv_counts, uv_gain, uv_res_
     clear_w = (np.bincount(win[keep], weights=clear[keep], minlength=W)
                / np.maximum(np.bincount(win[keep], minlength=W), 1))
     return Windows(t_start, imu, level, cmf, clear_w)
+
+
+# --- Extended features for learned classifiers ------------------------------------------
+# Same 5 s windows. Sign of acc y is dropped (wrist roll and left/right mounting differ
+# between people and datasets); everything else is either a magnitude or along the forearm
+# (x) / out of the wrist (z), which align between PAMAP2 and our device.
+
+ML_FEATURES = ("acc_mean_x", "acc_mean_y_abs", "acc_mean_z", "acc_mean_norm", "acc_mag_std",
+               "gyro_rms", "gyro_max", "acf_walk", "tilt_nz",
+               "acc_std_x", "acc_std_y", "acc_std_z", "gyro_std_x", "gyro_std_y", "gyro_std_z",
+               "acc_mag_p10", "acc_mag_p90",
+               "acc_band_0_1hz", "acc_band_1_3hz", "acc_band_3_8hz", "gyro_peak_hz")
+
+
+def _band_fractions(x, rate_hz, bands):
+    """Share of (de-meaned) spectral energy in each band, per window. x: (W, n)."""
+    x = x - x.mean(axis=1, keepdims=True)
+    spec = np.abs(np.fft.rfft(x, axis=1)) ** 2
+    f = np.fft.rfftfreq(x.shape[1], 1.0 / rate_hz)
+    total = spec[:, 1:].sum(axis=1) + 1e-12
+    return [spec[:, (f >= lo) & (f < hi)].sum(axis=1) / total for lo, hi in bands], spec, f
+
+
+def imu_features_ml(acc_g, gyro_dps, rate_hz=IMU_RATE_HZ):
+    """(W, len(ML_FEATURES)) features over non-overlapping 5 s windows.
+
+    PORT NOTE: uses an FFT of 100 samples; a direct DFT is fine in TypeScript.
+    """
+    base = imu_features(acc_g, gyro_dps, rate_hz)
+    n = int(WINDOW_S * rate_hz)
+    W = base.shape[0]
+    a = np.asarray(acc_g[: W * n], dtype=float).reshape(W, n, 3)
+    g = np.asarray(gyro_dps[: W * n], dtype=float).reshape(W, n, 3)
+    am = np.linalg.norm(a, axis=2)
+    gm = np.linalg.norm(g, axis=2)
+    bands, _, _ = _band_fractions(am, rate_hz, ((0.3, 1.0), (1.0, 3.0), (3.0, 8.0)))
+    _, gspec, f = _band_fractions(gm, rate_hz, ())
+    peak = f[1:][np.argmax(gspec[:, 1:], axis=1)]
+    i = {name: k for k, name in enumerate(IMU_FEATURES)}
+    return np.column_stack([
+        base[:, i["acc_mean_x"]], np.abs(base[:, i["acc_mean_y"]]), base[:, i["acc_mean_z"]],
+        base[:, i["acc_mean_norm"]], base[:, i["acc_mag_std"]], base[:, i["gyro_rms"]],
+        base[:, i["gyro_max"]], base[:, i["acf_walk"]], base[:, i["tilt_nz"]],
+        a.std(axis=1), g.std(axis=1),
+        np.percentile(am, 10, axis=1), np.percentile(am, 90, axis=1),
+        *bands, peak,
+    ])

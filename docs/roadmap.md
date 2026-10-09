@@ -49,8 +49,11 @@ Phase 0 done. Phase 1 steps 1–7 done on synthetic data:
 - forecast-aware projection
 - end-to-end beach-day figure
 
-Next: Phase 1b (PAMAP2 classifier) and Phase 2 (hardware). Results and caveats:
-`docs/body_dose.md`, `docs/event_detection.md`, `docs/forecast.md`.
+Phase 1b done: random forest on PAMAP2 wrist IMU, leave-one-subject-out macro-F1 0.78
+(rules baseline 0.44). See `docs/activity_classifier.md`.
+
+Next: Phase 2 (hardware). Results and caveats: `docs/body_dose.md`,
+`docs/event_detection.md`, `docs/forecast.md`, `docs/activity_classifier.md`.
 
 ## Phases
 
