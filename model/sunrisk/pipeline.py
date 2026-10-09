@@ -29,8 +29,22 @@ class ExposureEstimate:
     ratios: np.ndarray          # (M, P) per body part, relative to uvi_local
 
 
-def postures_from_activity(activity_names, lying_posture="supine"):
-    return np.array([lying_posture if a == "lying" else ACTIVITY_POSTURE[a] for a in activity_names])
+def postures_from_activity(activity_names):
+    """Detected activity -> posture. Lying stays "lying": the wrist cannot tell face-up from
+    face-down, so body-part ratios take the max of supine and prone (conservative)."""
+    return np.array(["lying" if a == "lying" else ACTIVITY_POSTURE[a] for a in activity_names])
+
+
+def _posture_ratios(posture, sun, fd, albedo, direct, parts, headings):
+    if posture == "lying":
+        return np.maximum(_posture_ratios("supine", sun, fd, albedo, direct, parts, headings),
+                          _posture_ratios("prone", sun, fd, albedo, direct, parts, headings))
+    normals = rotate_heading(posture_normals(posture, parts)[None, :, :], headings[:, None])  # (H,P,3)
+    r = surface_ratio(normals, sun[None, None, :], fd, albedo, 1.0, direct).mean(axis=0)
+    if posture == "swimming":
+        sub = np.array([SUBMERGED_WHEN_SWIMMING.get(p, 0.0) for p in parts])
+        r = r * (1.0 - sub + sub * config.WATER_UV_FACTOR.value)
+    return r
 
 
 def estimate_exposure(t_unix_s, uv_idx, uv_counts, uv_gain, uv_res_bits, acc_g, lat, lon,
@@ -79,11 +93,7 @@ def estimate_exposure(t_unix_s, uv_idx, uv_counts, uv_gain, uv_res_bits, acc_g, 
     post = np.asarray(posture)
     for k0 in keys:
         sl = slice(k0, min(k0 + step, M))
-        normals = rotate_heading(posture_normals(post[k0], parts)[None, :, :], headings[:, None])  # (36,P,3)
-        r = surface_ratio(normals, sun[k0][None, None, :], fd[k0], albedo, 1.0, direct[k0]).mean(axis=0)
-        if post[k0] == "swimming":
-            sub = np.array([SUBMERGED_WHEN_SWIMMING.get(p, 0.0) for p in parts])
-            r = r * (1.0 - sub + sub * config.WATER_UV_FACTOR.value)
+        r = _posture_ratios(post[k0], sun[k0], fd[k0], albedo, direct[k0], parts, headings)
         denom = float(bodydose.local_horizontal_factor(fd[k0], sun[k0][2] > 0, direct[k0]))
         ratios[sl] = r / max(denom, 1e-9)
 

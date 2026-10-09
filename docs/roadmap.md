@@ -38,6 +38,20 @@ Public datasets: **PAMAP2** (wrist IMU → activity/posture classifier) and **NA
 (hourly UV for 7 sites × 3 years → realistic synthetic days, and testing the forecast-aware
 countdown on past data). Details in `docs/datasets.md`.
 
+## Status (2026-10-08)
+
+Phase 0 done. Phase 1 steps 1–7 done on synthetic data:
+- core model
+- contracts
+- synthetic generator
+- solar position and body-part dose
+- event detection
+- forecast-aware projection
+- end-to-end beach-day figure
+
+Next: Phase 1b (PAMAP2 classifier) and Phase 2 (hardware). Results and caveats:
+`docs/body_dose.md`, `docs/event_detection.md`, `docs/forecast.md`.
+
 ## Phases
 
 | # | Phase | Done when |

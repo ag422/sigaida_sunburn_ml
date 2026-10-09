@@ -18,10 +18,28 @@ If pytest crashes on import with an unrelated plugin (e.g. some Anaconda install
 | `sunrisk/med.py` | MED priors by Fitzpatrick type, `PersonalMED` Bayesian posterior |
 | `sunrisk/sunscreen.py` | linear-in-amount SPF, wear-off, swim loss |
 | `sunrisk/tracker.py` | `ExposureTracker`: Monte Carlo risk engine (p10/p50/p90 time-left per body part) |
-| `sunrisk/datasets/nasa_power.py` | parse NASA POWER hourly UV |
+| `sunrisk/solar.py` | NOAA sun position (elevation, azimuth) |
+| `sunrisk/clearsky.py` | clear-sky UVI (Madronich 2007) |
+| `sunrisk/geometry.py` | UV on tilted surfaces, body-part normals per posture |
+| `sunrisk/bodydose.py` | sensor gain from tilt/compass, ambient UV estimate |
+| `sunrisk/pipeline.py` | device stream → ambient UVI + per-body-part ratios |
+| `sunrisk/events/` | event detection: features, rules detector, confusion matrices |
+| `sunrisk/forecast.py` | forecast-aware expected UV curve for time-left |
+| `sunrisk/session.py` | end-to-end: device arrays → detected events → risk over time |
+| `sunrisk/synth/` | synthetic sessions: scenarios, wrist motion, clouds, LTR390 counts |
+| `sunrisk/datasets/nasa_power.py` | parse NASA POWER hourly UV, fit site scale |
+
+Scripts (need the downloaded data):
+
+| Script | Output |
+|---|---|
+| `scripts/simulate_day.py` | `docs/figures/beach_day.png`: end-to-end beach day, per body part |
+| `scripts/evaluate_events.py` | event-detection confusion matrices (`docs/figures/event_confusion.png`) |
+| `scripts/backtest_forecast.py` | forecast vs constant projection errors |
+| `scripts/check_clearsky_vs_power.py` | clear-sky formula vs NASA POWER per site |
 
 Data (git-ignored, under `../data/`): `scripts/fetch_pamap2.sh`, `scripts/fetch_nasa_power.py`.
 After editing `config.py`, run `python scripts/render_assumptions.py`.
 
-The core (`sunrisk/` except `datasets/`) does no I/O, so it can be ported to TypeScript.
+The core (`sunrisk/` except `datasets/` and `synth/`) does no I/O, so it can be ported to TypeScript.
 Port notes are in module docstrings.
