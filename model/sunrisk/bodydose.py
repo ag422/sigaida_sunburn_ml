@@ -68,13 +68,16 @@ def sensor_gain(sun_enu, fd, albedo, direct_visible, nz=None, normal_enu=None, n
     return r / np.maximum(denom, 1e-9)
 
 
-def estimate_ambient(uvi_measured, gain, window_samples, min_gain=DEFAULT_MIN_GAIN):
+def estimate_ambient(uvi_measured, gain, window_samples, min_gain=DEFAULT_MIN_GAIN, exclude=None):
     """Sliding ratio-of-sums estimate of local horizontal UVI, (M,).
 
-    Samples whose sensor faces away (gain <= min_gain) are skipped. If a whole window has
-    none, the last estimate is carried forward (NaN at the very start).
+    Samples whose sensor faces away (gain <= min_gain) or that are excluded (e.g. sensor
+    covered) are skipped. If a whole window has none, the last estimate is carried forward
+    (NaN at the very start).
     """
     use = gain > min_gain
+    if exclude is not None:
+        use &= ~np.asarray(exclude, dtype=bool)
     num = np.cumsum(np.where(use, uvi_measured, 0.0))
     den = np.cumsum(np.where(use, gain, 0.0))
     w = int(window_samples)

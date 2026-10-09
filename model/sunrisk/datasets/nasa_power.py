@@ -80,3 +80,18 @@ def hourly_to_minutes(uvi_hourly: np.ndarray) -> np.ndarray:
     n = uvi_hourly.size
     centres = np.arange(n) * 60 + 30
     return np.interp(np.arange(n * 60), centres, uvi_hourly)
+
+
+def fit_site_scale(s: PowerSeries, max_cloud_pct: float = 5.0, min_elev_deg: float = 20.0) -> float:
+    """Median POWER / clear-sky-formula ratio over clear hours (absorbs aerosols, ozone, bias)."""
+    from ..clearsky import clear_sky_uvi
+    from ..solar import solar_position
+
+    sub = s.t_unix_s[:, None] + (np.arange(6) * 10 + 5) * 60.0
+    elev, _ = solar_position(sub, s.lat, s.lon)
+    model = clear_sky_uvi(elev).mean(axis=1)
+    uv = s.values[UV_PARAM]
+    clear = (s.values["CLOUD_AMT"] < max_cloud_pct) & (elev[:, 3] > min_elev_deg) & ~np.isnan(uv)
+    if clear.sum() < 10:
+        return 1.0
+    return float(np.median(uv[clear] / model[clear]))

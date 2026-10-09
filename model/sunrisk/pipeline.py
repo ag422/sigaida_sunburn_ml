@@ -35,8 +35,13 @@ def postures_from_activity(activity_names, lying_posture="supine"):
 
 def estimate_exposure(t_unix_s, uv_idx, uv_counts, uv_gain, uv_res_bits, acc_g, lat, lon,
                       environment, posture, albedo, mag_ut=None, ref_counts_per_uvi=None,
-                      window_s=bodydose.DEFAULT_WINDOW_S, parts=BODY_PARTS) -> ExposureEstimate:
-    """environment / posture: names per UV sample (M,)."""
+                      window_s=bodydose.DEFAULT_WINDOW_S, parts=BODY_PARTS,
+                      hold=None) -> ExposureEstimate:
+    """environment / posture: names per UV sample (M,).
+
+    hold: optional bool per UV sample; where True the previous ambient estimate is kept
+    (sensor dark but not confirmed indoors, e.g. a sleeve over it). Conservative.
+    """
     P = IMU_SAMPLES_PER_PACKET
     M = len(uv_idx)
     tu = np.asarray(t_unix_s)[uv_idx]
@@ -62,7 +67,8 @@ def estimate_exposure(t_unix_s, uv_idx, uv_counts, uv_gain, uv_res_bits, acc_g, 
 
     uv_rate = IMU_RATE_HZ / P
     w = max(1, int(window_s * uv_rate))
-    local = bodydose.estimate_ambient(uvi_meas, gain, w)
+    # held samples are left out, so the window keeps (forward-fills) the pre-darkness estimate
+    local = bodydose.estimate_ambient(uvi_meas, gain, w, exclude=hold)
     local = np.nan_to_num(local, nan=0.0)
 
     # body parts: recompute once a minute, heading unknown -> averaged
