@@ -24,6 +24,22 @@ original paper before quoting it in the report.
 | `SUNSCREEN_WEAR_TAU_H` | 3 | h | low | Exponential wear-off time constant at rest. Placeholder from the prototype; real loss depends on rubbing, sweat, product. |
 | `SUNSCREEN_WEAR_TAU_ACTIVE_H` | 1.5 | h | low | Wear-off time constant during vigorous activity / sweating. Placeholder. |
 | `SWIM_RETENTION` | 0.5 | fraction | low | Fraction of remaining protection kept after one swim. 'Water resistant' labels only promise SPF after 40/80 min immersion in lab conditions; towel drying removes more. |
+| `CLEARSKY_A` | 12.5 | UVI | medium | Madronich 2007, analytic clear-sky UV Index formula (Photochem. Photobiol. 83) |
+| `CLEARSKY_B` | 2.42 | - | medium | as above |
+| `CLEARSKY_C` | -1.23 | - | medium | as above |
+| `DEFAULT_OZONE_DU` | 300 | DU | medium | Typical total ozone column; real values vary ~250-450 DU by season and latitude. Use a forecast/climatology value where available. |
+| `UV_INCREASE_PER_KM` | 0.1 | fraction per km | medium | WHO INTERSUN: UV rises ~10-12% per 1000 m altitude |
+| `DIFFUSE_K` | 0.55 | - | low | Hand-fitted shape to reported erythemal diffuse fractions (~0.4-0.5 at high sun). Needs a literature fit. |
+| `DIFFUSE_P` | 0.6 | - | low | as above |
+| `ALBEDO[grass]` | 0.02 | fraction | medium | WHO INTERSUN: grass/soil reflect < 10% of UV |
+| `ALBEDO[sand]` | 0.15 | fraction | medium | WHO INTERSUN: dry beach sand ~15% |
+| `ALBEDO[water]` | 0.08 | fraction | medium | Water surface ~5-10% (higher with foam, ~25%) |
+| `ALBEDO[snow]` | 0.8 | fraction | medium | WHO INTERSUN: fresh snow up to 80% |
+| `SHADE_SKY_VIEW` | 0.5 | fraction | low | Share of sky diffuse still reaching skin under an umbrella/tree (direct beam fully blocked). Measurements under beach umbrellas range ~0.3-0.6. |
+| `INDOOR_UV_FACTOR` | 0.02 | fraction | low | Erythemal UV indoors near a window; glass blocks most UVB. |
+| `CLOUD_ATTENUATION` | 0.35 | fraction | low | UV transmitted when a cloud covers the sun (all diffuse). Broken-cloud edge enhancement (> 1) is NOT modelled. |
+| `WATER_UV_FACTOR` | 0.4 | fraction | low | Erythemal UV reaching skin ~0.3-0.5 m under water; depends strongly on clarity. |
+| `SLEEVE_OCCLUSION_FACTOR` | 0.1 | fraction | low | UV reaching the sensor when covered by a sleeve/hand (synthetic data only). |
 | `LTR390_COUNTS_PER_UVI` | 2300 | counts/UVI | low | LTR390 datasheet sensitivity at gain 18x, 20-bit. Must be replaced by outdoor calibration against an official UVI (Phase 3). |
 | `SENSOR_CAL_LOG_SD` | 0.2 | ln(UVI) | low | Uncertainty of counts->UVI before calibration. Should shrink to the measured residual spread after Phase 3. |
 | `ALERT_LEAD_MIN` | 15 | min | low | Product choice, not physiology: alert when the pessimistic (p10) time-left drops below this. |

@@ -97,6 +97,61 @@ SWIM_RETENTION = Assumption(
     "promise SPF after 40/80 min immersion in lab conditions; towel drying removes more.",
 )
 
+# --- Clear-sky UV and geometry -----------------------------------------------------------
+
+# Clear-sky UVI = A * mu0**B * (ozone/300 DU)**C   (mu0 = sin(solar elevation))
+CLEARSKY_A = Assumption(12.5, "UVI", "medium", "Madronich 2007, analytic clear-sky UV Index formula (Photochem. Photobiol. 83)")
+CLEARSKY_B = Assumption(2.42, "-", "medium", "as above")
+CLEARSKY_C = Assumption(-1.23, "-", "medium", "as above")
+
+DEFAULT_OZONE_DU = Assumption(
+    300.0, "DU", "medium",
+    "Typical total ozone column; real values vary ~250-450 DU by season and latitude. "
+    "Use a forecast/climatology value where available.",
+)
+
+UV_INCREASE_PER_KM = Assumption(
+    0.10, "fraction per km", "medium", "WHO INTERSUN: UV rises ~10-12% per 1000 m altitude",
+)
+
+# Diffuse share of erythemal UV under clear sky: f_d = 1 - DIFFUSE_K * mu0**DIFFUSE_P.
+# Gives ~0.45 at high sun, ~0.65 at 30 deg elevation, ~0.8 near the horizon. Erythemal UV is
+# far more diffuse than visible light because Rayleigh scattering grows strongly at short
+# wavelengths.
+DIFFUSE_K = Assumption(0.55, "-", "low", "Hand-fitted shape to reported erythemal diffuse fractions (~0.4-0.5 at high sun). Needs a literature fit.")
+DIFFUSE_P = Assumption(0.6, "-", "low", "as above")
+
+ALBEDO = {
+    "grass": Assumption(0.02, "fraction", "medium", "WHO INTERSUN: grass/soil reflect < 10% of UV"),
+    "sand": Assumption(0.15, "fraction", "medium", "WHO INTERSUN: dry beach sand ~15%"),
+    "water": Assumption(0.08, "fraction", "medium", "Water surface ~5-10% (higher with foam, ~25%)"),
+    "snow": Assumption(0.80, "fraction", "medium", "WHO INTERSUN: fresh snow up to 80%"),
+}
+
+SHADE_SKY_VIEW = Assumption(
+    0.5, "fraction", "low",
+    "Share of sky diffuse still reaching skin under an umbrella/tree (direct beam fully "
+    "blocked). Measurements under beach umbrellas range ~0.3-0.6.",
+)
+
+INDOOR_UV_FACTOR = Assumption(
+    0.02, "fraction", "low", "Erythemal UV indoors near a window; glass blocks most UVB.",
+)
+
+CLOUD_ATTENUATION = Assumption(
+    0.35, "fraction", "low",
+    "UV transmitted when a cloud covers the sun (all diffuse). Broken-cloud edge enhancement "
+    "(> 1) is NOT modelled.",
+)
+
+WATER_UV_FACTOR = Assumption(
+    0.4, "fraction", "low", "Erythemal UV reaching skin ~0.3-0.5 m under water; depends strongly on clarity.",
+)
+
+SLEEVE_OCCLUSION_FACTOR = Assumption(
+    0.1, "fraction", "low", "UV reaching the sensor when covered by a sleeve/hand (synthetic data only).",
+)
+
 # --- Sensor -----------------------------------------------------------------------------
 
 LTR390_COUNTS_PER_UVI = Assumption(
