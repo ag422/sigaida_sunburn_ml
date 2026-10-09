@@ -1,0 +1,14 @@
+# Datasets are downloaded, never committed (see docs/datasets.md)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.egg-info/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
