@@ -43,4 +43,8 @@ original paper before quoting it in the report.
 | `SLEEVE_OCCLUSION_FACTOR` | 0.1 | fraction | low | UV reaching the sensor when covered by a sleeve/hand (synthetic data only). |
 | `LTR390_COUNTS_PER_UVI` | 2300 | counts/UVI | low | LTR390 datasheet sensitivity at gain 18x, 20-bit. Must be replaced by outdoor calibration against an official UVI (Phase 3). |
 | `SENSOR_CAL_LOG_SD` | 0.2 | ln(UVI) | low | Uncertainty of counts->UVI before calibration. Should shrink to the measured residual spread after Phase 3. |
+| `PERSIST_TAU_MIN[sun]` | 60 | min | low | Model choice: current clear-sky ratio persists ~1 h. |
+| `PERSIST_TAU_MIN[cloud]` | 10 | min | low | Model choice: a cloud over the sun usually passes within minutes. |
+| `PERSIST_TAU_MIN[shade]` | 30 | min | low | Model choice: people stay in shade a while, then may go back out. |
+| `PERSIST_TAU_MIN[indoor]` | 0 | min | low | Indoors the countdown means 'if you went out now' -> forecast only. |
 | `ALERT_LEAD_MIN` | 15 | min | low | Product choice, not physiology: alert when the pessimistic (p10) time-left drops below this. |

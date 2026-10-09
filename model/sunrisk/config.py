@@ -172,6 +172,17 @@ SENSOR_CAL_LOG_SD = Assumption(
     "spread after Phase 3.",
 )
 
+# --- Forecast-aware projection --------------------------------------------------------
+
+# How long the current condition (relative to clear sky) is expected to persist before the
+# projection relaxes to the forecast: weight on "now" = exp(-minutes ahead / tau).
+PERSIST_TAU_MIN = {
+    "sun": Assumption(60.0, "min", "low", "Model choice: current clear-sky ratio persists ~1 h."),
+    "cloud": Assumption(10.0, "min", "low", "Model choice: a cloud over the sun usually passes within minutes."),
+    "shade": Assumption(30.0, "min", "low", "Model choice: people stay in shade a while, then may go back out."),
+    "indoor": Assumption(0.0, "min", "low", "Indoors the countdown means 'if you went out now' -> forecast only."),
+}
+
 # --- Monte Carlo ------------------------------------------------------------------------
 
 N_PARTICLES = 500
