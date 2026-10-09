@@ -34,6 +34,10 @@ Mostly a physics/physiology model with Monte Carlo uncertainty. Two parts are le
    to measure how well it carries over.
 2. **Personal MED.** A Bayesian update from skin-redness photos (prior from skin type).
 
+Public datasets: **PAMAP2** (wrist IMU → activity/posture classifier) and **NASA POWER**
+(hourly UV for 7 sites × 3 years → realistic synthetic days, and testing the forecast-aware
+countdown on past data). Details in `docs/datasets.md`.
+
 ## Phases
 
 | # | Phase | Done when |

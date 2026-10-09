@@ -76,13 +76,58 @@ lap counting using a smartwatch and deep learning*, ISWC 2019 (wrist accel + gyr
 swim detection stays rules-based (sustained periodic arm motion plus UV dropping to near zero
 underwater) and gets validated on our own data.
 
-## 3. Measured UV (TBD)
+## 3. NASA POWER hourly UV (second public dataset)
 
-For checking the clear-sky model and the forecast-aware countdown: historical measured UV
-from USDA UV-B Monitoring and Research Program sites, or Open-Meteo historical
-`uv_index`. Not yet chosen; check availability and terms first.
+- **Source:** NASA POWER Hourly API (`https://power.larc.nasa.gov/api/temporal/hourly/point`).
+  Fetch with `python model/scripts/fetch_nasa_power.py`. Uses the standard library only;
+  about 0.7 MB per site-year.
+- **Parameters:** `ALLSKY_SFC_UV_INDEX` (all-sky UV Index), `CLOUD_AMT` (%),
+  `ALLSKY_KT` (clearness index, NaN at night), `T2M` (°C). There is **no clear-sky UV
+  parameter** (`CLRSKY_SFC_UV_INDEX` is rejected by the API).
+- **Coverage checked:** hourly UV exists from at least 2001 to Oct 2025, at any lat/lon.
+- **Downloaded (2026-10-08):** 7 sites × 2022–2024, giving **7,651 complete days** (missing
+  hours < 0.05%):
 
-## 4. Our own recordings (Phase 3)
+| Site | Summer daily-max UVI (median / p90) | Winter median |
+|---|---|---|
+| Honolulu | 11.4 / 12.2 | 6.2 |
+| Miami | 9.2 / 10.3 | 4.8 |
+| Phoenix | 10.3 / 11.3 | 3.1 |
+| Los Angeles | 9.8 / 10.8 | 2.6 |
+| Sydney | 10.3 / 12.4 | 2.5 |
+| Chicago | 7.0 / 8.8 | 1.0 |
+| Seattle | 6.4 / 8.1 | 0.6 |
 
-Session CSVs from the device (format in `docs/contracts.md`, still to be written), with
+**How we use it:**
+1. **Synthetic generator (step 3):** real hourly UV days provide the large-scale shape (time
+   of day, season, cloudy days). Our generator adds minute-scale clouds, shade, indoor periods
+   and the wearer's IMU motion on top.
+2. **Checking our clear-sky model:** compare our formula to POWER on clear days (high
+   `ALLSKY_KT`, low `CLOUD_AMT`).
+3. **Testing the forecast-aware countdown (step 6) on past data:** predict the rest of a
+   past day from what was known in the morning (a clear-sky curve, or the same date in other
+   years), then compare with the UV that actually happened. Report the error in time-left
+   minutes.
+
+**Caveats:**
+- **Satellite-derived** (CERES SYN1deg, ~1° grid ≈ 100 km), not a ground measurement.
+- **Hourly averages:** these slightly understate instantaneous peak UVI, and they average
+  out single passing clouds.
+- **Not usable for calibrating our sensor.** That still needs an official ground UVI or a
+  reference meter at the same spot (Phase 3).
+
+## 4. Datasets considered and not used for modeling
+
+- **NOAA ClimateBits UV Index:** a **monthly-average** UV climatology, built for
+  visualization. POWER covers the same information at hourly resolution for any point, so
+  this adds nothing for the model. It could be used for a background figure in the report.
+- **WHO UV radiation / disease burden:** population-level deaths and DALYs attributable to
+  UV. There are no individual exposure or sunburn labels, so it can't train or validate
+  anything here. Use it in the report's **motivation** section only.
+- **Measured ground UV (USDA UVMRP, EPA):** still worth considering in Phase 3 as ground
+  truth near the calibration site. Not downloaded.
+
+## 5. Our own recordings (Phase 3)
+
+Session CSVs from the device (format in `docs/contracts.md`), with
 event labels entered in the app.
