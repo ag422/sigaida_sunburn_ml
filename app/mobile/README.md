@@ -15,6 +15,16 @@ npm install
 npm start          # then scan the QR code with Expo Go on your phone, or press w for web
 ```
 
+If Expo Go hangs on the loading screen, the phone probably can't reach your computer (common
+on school Wi-Fi). Use a tunnel instead, from `app/mobile`:
+
+```bash
+npx expo start --tunnel ngrok
+```
+
+On Windows PowerShell, if `npm`/`npx` fail with "running scripts is disabled", use `npm.cmd` /
+`npx.cmd` instead.
+
 Checks, from `app/mobile`: `npm run typecheck`, `npm run lint`.
 
 ## How it fits together
