@@ -1,0 +1,12 @@
+{
+  "name": "sunrisk-app",
+  "private": true,
+  "workspaces": [
+    "risk-engine",
+    "mobile"
+  ],
+  "scripts": {
+    "test": "npm test --workspace risk-engine",
+    "start": "npm start --workspace mobile"
+  }
+}

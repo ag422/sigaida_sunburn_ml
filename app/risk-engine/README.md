@@ -3,10 +3,12 @@
 TypeScript port of the Python risk engine (`model/sunrisk/`), for the app. An awareness tool,
 not a medical device.
 
+Part of the npm workspace in `app/` (with `mobile/`), so install from there:
+
 ```bash
-npm install
-npm test            # vitest
-npm run typecheck
+cd app && npm install
+npm test --workspace risk-engine          # vitest
+npm run typecheck --workspace risk-engine
 ```
 
 | Module | Ported from |
