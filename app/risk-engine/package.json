@@ -1,0 +1,17 @@
+{
+  "name": "@sunrisk/risk-engine",
+  "version": "0.1.0",
+  "description": "TypeScript port of the sunrisk risk engine (awareness tool, not a medical device)",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
