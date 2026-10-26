@@ -5,7 +5,7 @@
  */
 
 import {
-  ExposureTracker, expectedUviCurve, seededRng, type RiskOutput, type RiskStep,
+  ExposureTracker, expectedUviCurve, seededRng, type BodyPart, type RiskOutput, type RiskStep,
 } from "@sunrisk/risk-engine";
 import { useCallback, useEffect, useState } from "react";
 
@@ -83,8 +83,9 @@ export function useBeachDay() {
     setRunning(true);
   }, []);
 
-  const applySunscreen = useCallback((spf: number) => {
-    sim.tracker.applySunscreen({ t_unix_s: sim.t, spf_label: spf });
+  const applySunscreen = useCallback((spf: number, bodyParts?: BodyPart[]) => {
+    if (bodyParts?.length === 0) return;
+    sim.tracker.applySunscreen({ t_unix_s: sim.t, spf_label: spf, body_parts: bodyParts });
     setSnap(snapshot(sim));
   }, [sim]);
 

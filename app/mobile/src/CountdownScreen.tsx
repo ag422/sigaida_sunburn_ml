@@ -4,7 +4,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { BodyPartRow } from "./components/BodyPartRow";
 import { CountdownCard } from "./components/CountdownCard";
+import { NotificationTest } from "./components/NotificationTest";
+import { SunscreenControls } from "./components/SunscreenControls";
 import { formatClock, uvCategory } from "./format";
+import { useSunscreenReminders } from "./hooks/useSunscreenReminders";
 import { FITZPATRICK } from "./sim/beachDay";
 import { SPEEDS, useBeachDay } from "./sim/useBeachDay";
 import { colors } from "./theme";
@@ -14,6 +17,7 @@ const SKIN_TYPES = ["", "I", "II", "III", "IV", "V", "VI"];
 export function CountdownScreen() {
   const insets = useSafeAreaInsets();
   const { snap, running, setRunning, speed, setSpeed, reset, applySunscreen } = useBeachDay();
+  useSunscreenReminders(snap.output.parts, snap.tUnixS, speed, running && !snap.finished);
   const uvi = snap.step.uvi_ambient;
   const cat = uvCategory(uvi);
   // most urgent first
@@ -56,9 +60,8 @@ export function CountdownScreen() {
         )}
       </View>
 
-      <Pressable style={[styles.button, styles.sunscreen]} onPress={() => applySunscreen(30)}>
-        <Text style={styles.buttonText}>Applied SPF 30 everywhere</Text>
-      </Pressable>
+      <SunscreenControls onApply={applySunscreen} />
+      {__DEV__ && <NotificationTest />}
 
       <Text style={styles.section}>Body parts</Text>
       <View style={styles.list}>
@@ -90,7 +93,6 @@ const styles = StyleSheet.create({
   controls: { flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" },
   button: { backgroundColor: colors.accent, borderRadius: 12, paddingHorizontal: 18, paddingVertical: 10 },
   buttonText: { color: "#fff", fontWeight: "700", fontSize: 15, textAlign: "center" },
-  sunscreen: { alignSelf: "stretch" },
   chip: { borderRadius: 10, borderWidth: 1, borderColor: colors.border, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: colors.card },
   chipOn: { backgroundColor: colors.text, borderColor: colors.text },
   chipText: { color: colors.text, fontWeight: "600" },
