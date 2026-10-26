@@ -3,6 +3,7 @@
     "name": "SunRisk",
     "slug": "sunrisk",
     "version": "1.0.0",
+    "plugins": ["expo-notifications"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
